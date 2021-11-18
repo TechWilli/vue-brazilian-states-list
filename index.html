@@ -17,24 +17,36 @@
       <h1>Estados do Brasil</h1>
     </header>
     <main>
-      <p class="explanation">Abaxio estão listados os 26 estados do Brasil mais o Distrito Federal. Totalizando {{brazilianStates.length}} Unidades Federativas.</p>
+      <p class="explanation">Abaxio estão listados os 26 estados do Brasil mais o Distrito Federal. Totalizando {{ amountOfStates }} Unidades Federativas.</p>
+      <div class="filter-container">
+        <span>Região:</span>
+        <div class="select-wrapper" v-on:click="openPicklist">
+          <span class="selected-value" v-bind:data-value="currentFilterSelection.value">{{ currentFilterSelection.label }}</span>
+          <div class="arrow-wrapper">
+            <div class="arrow-down"></div>
+          </div>
+          <ul class="selection-list hide-list">
+            <li class="selection-option" v-on:click="handleRegionFilter" v-for="({ value, label }, index) of regionsPicklist" v-bind:key="'select-' + index" v-bind:data-value="value" v-bind:data-label="label">{{ label }}</li>
+          </ul>
+        </div>
+      </div>
       <ul class="states-list">
-        <li v-for="({ nome, sigla, capital, imageFlagName }, index) of brazilianStates" v-bind:key="'state -' + index">
+        <li v-for="({ nome, sigla, capital, imageFlagName }, index) of filteredStates" v-bind:key="'state-' + index">
           <div class="card">
             <div class="image-flag-container">
               <img v-bind:src="`./images/bandeiras-estados-do-brasil/${imageFlagName}`" v-bind:alt="`bandeira do ${nome}`">
             </div>
             <div>
-              <span class="state-name">{{nome}}</span>
-              <p class="state-sigla">({{sigla}})</p>
-              <p class="state-capital">Capital: {{capital}}</p>
+              <span class="state-name">{{ nome }}</span>
+              <p class="state-sigla">({{ sigla }})</p>
+              <p class="state-capital">Capital: {{ capital }}</p>
             </div>
           </div>
         </li>
       </ul>
     </main>
     <footer>
-      <p>Desenvolvido por <a v-bind:href="developer.github" target="_blank">{{developer.name}}</a></p>
+      <p>Desenvolvido por <a v-bind:href="developer.github" target="_blank">{{ developer.name }}</a></p>
     </footer>
   </div>
 
@@ -43,42 +55,82 @@
       el: "#app",
       data: {
         brazilianStates: [
-          { nome: 'Acre', sigla: 'AC', capital: 'Rio Branco', imageFlagName: 'Acre.jpg' },
-          { nome: 'Alagoas', sigla: 'AL', capital: 'Maceió', imageFlagName: 'Alagoas.jpg' },
-          { nome: 'Amapá', sigla: 'AP', capital: 'Macapá', imageFlagName: 'Amapa.jpg' },
-          { nome: 'Amazonas', sigla: 'AM', capital: 'Manaus', imageFlagName: 'Amazonas.jpg' },
-          { nome: 'Bahia', sigla: 'BA', capital: 'Salvador', imageFlagName: 'Bahia.jpg' },
-          { nome: 'Ceará', sigla: 'CE', capital: 'Fortaleza', imageFlagName: 'Ceara.jpg' },
-          { nome: 'Distrito Federal', sigla: 'DF', capital: 'Brasília', imageFlagName: 'Brasilia.jpg' },
-          { nome: 'Espírito Santo', sigla: 'ES', capital: 'Vitória', imageFlagName: 'Espiritosanto.jpg' },
-          { nome: 'Goiás', sigla: 'GO', capital: 'Goiânia', imageFlagName: 'Goias.jpg' },
-          { nome: 'Maranhão', sigla: 'MA', capital: 'São Luís', imageFlagName: 'Maranhao.jpg' },
-          { nome: 'Mato Grosso', sigla: 'MT', capital: 'Cuiabá', imageFlagName: 'Matogrosso.jpg' },
-          { nome: 'Mato Grosso do Sul', sigla: 'MS', capital: 'Campo Grande', imageFlagName: 'Matogrossodosul.jpg' },
-          { nome: 'Minas Gerais', sigla: 'MG', capital: 'Belo Horizonte', imageFlagName: 'Minasgerais.jpg' },
-          { nome: 'Pará', sigla: 'PA', capital: 'Belém', imageFlagName: 'Para.jpg' },
-          { nome: 'Paraíba', sigla: 'PB', capital: 'João Pessoa', imageFlagName: 'Paraiba.jpg' },
-          { nome: 'Paraná', sigla: 'PR', capital: 'Curitiba', imageFlagName: 'parana.jpg' },
-          { nome: 'Pernambuco', sigla: 'PE', capital: 'Recife', imageFlagName: 'Pernambuco.jpg' },
-          { nome: 'Piauí', sigla: 'PI', capital: 'Teresina', imageFlagName: 'Piaui.jpg' },
-          { nome: 'Rio de Janeiro', sigla: 'RJ', capital: 'Rio de Janeiro', imageFlagName: 'Riodejaneiro.jpg' },
-          { nome: 'Rio Grande do Norte', sigla: 'RN', capital: 'Natal', imageFlagName: 'Riograndedonorte.jpg' },
-          { nome: 'Rio Grande do Sul', sigla: 'RS', capital: 'Porto Alegre', imageFlagName: 'Riograndedosul.jpg' },
-          { nome: 'Rondônia', sigla: 'RO', capital: 'Porto Velho', imageFlagName: 'Rondonia.jpg' },
-          { nome: 'Roraima', sigla: 'RR', capital: 'Boa Vista', imageFlagName: 'Roraima.jpg' },
-          { nome: 'Santa Catarina', sigla: 'SC', capital: 'Florianópolis', imageFlagName: 'Santacatarina.jpg' },
-          { nome: 'São Paulo', sigla: 'SP', capital: 'São Paulo', imageFlagName: 'Saopaulo.jpg' },
-          { nome: 'Sergipe', sigla: 'SE', capital: 'Aracajú', imageFlagName: 'Sergipe.jpg' },
-          { nome: 'Tocantins', sigla: 'TO', capital: 'Palmas', imageFlagName: 'Tocantins.jpg' },
+          { nome: 'Acre', sigla: 'AC', capital: 'Rio Branco', regiao: 'norte', imageFlagName: 'Acre.jpg' },
+          { nome: 'Alagoas', sigla: 'AL', capital: 'Maceió', regiao: 'nordeste', imageFlagName: 'Alagoas.jpg' },
+          { nome: 'Amapá', sigla: 'AP', capital: 'Macapá', regiao: 'norte', imageFlagName: 'Amapa.jpg' },
+          { nome: 'Amazonas', sigla: 'AM', capital: 'Manaus', regiao: 'norte', imageFlagName: 'Amazonas.jpg' },
+          { nome: 'Bahia', sigla: 'BA', capital: 'Salvador', regiao: 'nordeste', imageFlagName: 'Bahia.jpg' },
+          { nome: 'Ceará', sigla: 'CE', capital: 'Fortaleza', regiao: 'nordeste', imageFlagName: 'Ceara.jpg' },
+          { nome: 'Distrito Federal', sigla: 'DF', capital: 'Brasília', regiao: 'centroOeste', imageFlagName: 'Brasilia.jpg' },
+          { nome: 'Espírito Santo', sigla: 'ES', capital: 'Vitória', regiao: 'sudeste', imageFlagName: 'Espiritosanto.jpg' },
+          { nome: 'Goiás', sigla: 'GO', capital: 'Goiânia', regiao: 'centroOeste', imageFlagName: 'Goias.jpg' },
+          { nome: 'Maranhão', sigla: 'MA', capital: 'São Luís', regiao: 'nordeste', imageFlagName: 'Maranhao.jpg' },
+          { nome: 'Mato Grosso', sigla: 'MT', capital: 'Cuiabá', regiao: 'centroOeste', imageFlagName: 'Matogrosso.jpg' },
+          { nome: 'Mato Grosso do Sul', sigla: 'MS', capital: 'Campo Grande', regiao: 'centroOeste', imageFlagName: 'Matogrossodosul.jpg' },
+          { nome: 'Minas Gerais', sigla: 'MG', capital: 'Belo Horizonte', regiao: 'sudeste', imageFlagName: 'Minasgerais.jpg' },
+          { nome: 'Pará', sigla: 'PA', capital: 'Belém', regiao: 'norte', imageFlagName: 'Para.jpg' },
+          { nome: 'Paraíba', sigla: 'PB', capital: 'João Pessoa', regiao: 'nordeste', imageFlagName: 'Paraiba.jpg' },
+          { nome: 'Paraná', sigla: 'PR', capital: 'Curitiba', regiao: 'sul', imageFlagName: 'parana.jpg' },
+          { nome: 'Pernambuco', sigla: 'PE', capital: 'Recife', regiao: 'nordeste', imageFlagName: 'Pernambuco.jpg' },
+          { nome: 'Piauí', sigla: 'PI', capital: 'Teresina', regiao: 'nordeste', imageFlagName: 'Piaui.jpg' },
+          { nome: 'Rio de Janeiro', sigla: 'RJ', capital: 'Rio de Janeiro', regiao: 'sudeste', imageFlagName: 'Riodejaneiro.jpg' },
+          { nome: 'Rio Grande do Norte', sigla: 'RN', capital: 'Natal', regiao: 'nordeste', imageFlagName: 'Riograndedonorte.jpg' },
+          { nome: 'Rio Grande do Sul', sigla: 'RS', capital: 'Porto Alegre', regiao: 'sul', imageFlagName: 'Riograndedosul.jpg' },
+          { nome: 'Rondônia', sigla: 'RO', capital: 'Porto Velho', regiao: 'norte', imageFlagName: 'Rondonia.jpg' },
+          { nome: 'Roraima', sigla: 'RR', capital: 'Boa Vista', regiao: 'norte', imageFlagName: 'Roraima.jpg' },
+          { nome: 'Santa Catarina', sigla: 'SC', capital: 'Florianópolis', regiao: 'sul', imageFlagName: 'Santacatarina.jpg' },
+          { nome: 'São Paulo', sigla: 'SP', capital: 'São Paulo', regiao: 'sudeste', imageFlagName: 'Saopaulo.jpg' },
+          { nome: 'Sergipe', sigla: 'SE', capital: 'Aracajú', regiao: 'nordeste', imageFlagName: 'Sergipe.jpg' },
+          { nome: 'Tocantins', sigla: 'TO', capital: 'Palmas', regiao: 'norte', imageFlagName: 'Tocantins.jpg' },
         ],
+        filteredStates: [],
         developer: {
           name: 'TechWilli',
           github: 'https://github.com/TechWilli'
-        }
+        },
+        regionsPicklist: [
+          { value: 'todas', label: 'Todas' },
+          { value: 'norte', label: 'Norte' },
+          { value: 'nordeste', label: 'Nordeste' },
+          { value: 'sul', label: 'Sul' },
+          { value: 'sudeste', label: 'Sudeste' },
+          { value: 'centroOeste', label: 'Centro-Oeste' }
+        ],
+        currentFilterSelection: { value: 'todas', label: 'Todas' }
       },
       methods: {
+        openPicklist(event) {
+          const arrowWapper = document.querySelector('.arrow-wrapper')
+          const selectionList = document.querySelector('.selection-list')
 
+          arrowWapper.classList.toggle('arrow-up')
+          selectionList.classList.toggle('hide-list')
+        },
+        handleRegionFilter(event) {
+          this.currentFilterSelection = { ...event.target.dataset }
+        }
       },
+      computed: {
+        amountOfStates() {
+          return this.brazilianStates.length
+        },
+      },
+      watch: {
+        // uma forma de usar o watch, observando o currentFilterSelection para cada vez que uma nova região for atribuída, filtrar o brazilianStates
+        currentFilterSelection(currentValue) {
+          // console.log('currentValue.value', currentValue.value)
+
+          if (!(currentValue.value === 'todas')) {
+            this.filteredStates = this.brazilianStates.filter(state => state.regiao === currentValue.value)
+          } else {
+            this.filteredStates = this.brazilianStates
+          }
+        }
+      },
+      mounted() {
+        // quando o component for montado na tela, atribui o valor do filtro para a listagem completa de estados
+        this.filteredStates = this.brazilianStates
+      }
     })
 
     console.log('Vue vm', vm)

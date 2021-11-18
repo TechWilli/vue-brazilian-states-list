@@ -148,3 +148,88 @@ footer {
 footer a {
   font-weight: 600;
 }
+
+.filter-container {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.select-wrapper {
+  position: relative;
+  border: 1px solid var(--border-color);
+  max-width: 15rem;
+  width: 100%;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  border-radius: .25rem;
+  background-color: #ffffff;
+  transition: 200ms;
+  margin-left: 1rem;
+}
+
+.select-wrapper:hover {
+  box-shadow: 0 0 0 2px var(--green);
+}
+
+.arrow-wrapper {
+  height: 100%;
+  padding-top: 10px;
+  position: absolute;
+  right: 13px;
+  top: 0;
+  z-index: 0;
+  transition: transform 150ms ease-in;
+}
+
+.arrow-down {
+  width: .75rem;
+  height: .75rem;
+  border: 3px solid var(--text-color);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.arrow-up {
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+.selected-value {
+  font-weight: 600;
+}
+
+.selection-list {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 .25rem .25rem;
+  width: 100%;
+  left: 0;
+  top: 40px;
+  transform: translateY(-50px);
+  opacity: 0;
+  animation: showList 300ms forwards;
+}
+
+@keyframes showList {
+  to {
+    transform: initial;
+    opacity: inherit;
+  }
+}
+
+.selection-option {
+  padding: .5rem 1rem;
+}
+
+.selection-option:hover {
+  background-color: var(--green);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.hide-list {
+  display: none;
+}
